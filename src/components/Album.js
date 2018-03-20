@@ -16,8 +16,11 @@ class Album extends Component {
        currentSong: album.songs[0],
        currentTime: 0,
        duration: album.songs[0].duration,
-       isPlaying: false
-     };
+       isPlaying: false,
+       volSet: 0,
+       volChange: 0
+
+      };
      this.audioElement = document.createElement('audio');
      this.audioElement.src = album.songs[0].audioSrc;
    }
@@ -37,7 +40,28 @@ class Album extends Component {
 
   componentWillUnmount() {
      this.audioElement.src = null;
-     this.audioElement = null;
+     this.audioElement.removeEventListener('timeupdate', this.eventListeners.timeupdate);
+     this.audioElement.removeEventListener('durationchange', this.eventListeners.durationchange);
+   }
+
+   componentVolumeDidMount() {
+     this.eventListeners = {
+        volumeset: e => {
+          this.setState({ volSet: this.audioElement.volSet });
+        },
+        volumechange: e => {
+          this.setState({ volChange: this.audioElement.volChange });
+        }
+      };
+      this.audioElement.addEventListener('volumeset', this.eventListeners.volumeset);
+      this.audioElement.addEventListener('volumechange', this.eventListeners.volumechange);
+  }
+
+  componentVolumeWillUnmount() {
+     this.audioElement.src = null;
+     this.audioElement.src = null;
+     this.audioElement.removeEventListener('volumeset', this.eventListeners.timeupdate);
+     this.audioElement.removeEventListener('volumechange', this.eventListeners.durationchange);
    }
 
    play() {
@@ -84,6 +108,25 @@ class Album extends Component {
      this.setState({ currentTime: newTime });
    }
 
+   handleVolumeChange(e) {
+    const newVolume = e.target.value;
+    this.audioElement.volume = newVolume;
+    this.setState({ volSet: newVolume });
+  }
+
+    formatTime(seconds) {
+      var minutes = Math.floor(seconds / 60);
+      //var minutes divides seconds in song by 60 to get minutes (rounded down using math.floor)
+      var leftoverSeconds = Math.floor(seconds % 60);
+      //var leftoverSeconds takes seconds modulus by 60 to get the remainder of seconds (rounded down using math.floor)
+      if ( leftoverSeconds < 10) {
+        leftoverSeconds = "0" + leftoverSeconds;
+      }
+      //if states that if leftoverSeconds is less than 9 than it will add a "0" to the front of the number
+      return(minutes + ':' + leftoverSeconds);
+      //return states add var minutes and var leftoversecond together with a : to format time like mm:ss
+ }
+
    render() {
      return (
        <section className="album">
@@ -112,7 +155,7 @@ class Album extends Component {
                    </button>
                  </td>
                  <td className="song-title">{song.title}</td>
-                 <td className="song-duration">{song.duration}</td>
+                 <td className="song-duration">{this.formatTime(song.duration)}</td>
                </tr>
              )}
            </tbody>
@@ -122,10 +165,14 @@ class Album extends Component {
            currentSong={this.state.currentSong}
            currentTime={this.audioElement.currentTime}
            duration={this.audioElement.duration}
+           volSet={this.audioElement.volSet}
+           volChange={this.audioElement.volChange}
            handleSongClick={() => this.handleSongClick(this.state.currentSong)}
            handlePrevClick={() => this.handlePrevClick()}
            handleNextClick={() => this.handleNextClick()}
            handleTimeChange={(e) => this.handleTimeChange(e)}
+           handleVolumeChange={(e) => this.handleVolumeChange(e)}
+           formatTime={(e) => this.formatTime(e)}
          />
        </section>
      );
