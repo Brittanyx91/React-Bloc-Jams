@@ -4,6 +4,7 @@ import PlayerBar from './PlayerBar';
 
 
 
+
 class Album extends Component {
   constructor(props) {
      super(props);
@@ -148,20 +149,11 @@ class Album extends Component {
            </colgroup>
            <tbody>
            {this.state.album.songs.map( (song, index) =>
-               <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
-                 <td className="song-actions">
-                   <button>
-                     <span className="song-number">{index+1}</span>
-                     <span className="ion-play"></span>
-                     <span className="ion-pause"></span>
-                   </button>
-                 </td>
-                 <td className="song-title">{song.title}</td>
-                 <td className="song-duration">{this.formatTime(song.duration)}</td>
-               </tr>
-             )}
-           </tbody>
+
+          
+
          </table>
+
          <PlayerBar
            isPlaying={this.state.isPlaying}
            currentSong={this.state.currentSong}
