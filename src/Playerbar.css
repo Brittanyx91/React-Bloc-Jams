@@ -1,0 +1,5 @@
+.song-number:hover {
+      cursor: pointer;
+      color: white;
+      background-color: rgb(210, 40, 123);
+  }

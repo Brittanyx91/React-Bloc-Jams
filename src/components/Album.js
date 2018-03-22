@@ -94,13 +94,14 @@ class Album extends Component {
      this.play(newSong);
     }
 
-    handleNextClick() {
-      const currentIndex = this.state.album.songs.findIndex(song => this.state.currentSong === song);
-      const newIndex = Math.max(0, currentIndex + 1);
-      const newSong = this.state.album.songs[newIndex];
-      this.setSong(newSong);
-     this.play(newSong);
-    }
+    handleNextClick(){
+         const currentIndex = this.state.album.songs.findIndex(song => this.state.currentSong === song);
+         const newIndex = Math.min(currentIndex +1, this.state.album.songs.length -1);
+         const newSong = this.state.album.songs[newIndex];
+         this.setSong (newSong);
+         this.play(newSong);
+
+     }
 
     handleTimeChange(e) {
      const newTime = this.audioElement.duration * e.target.value;
@@ -120,9 +121,10 @@ class Album extends Component {
       var leftoverSeconds = Math.floor(seconds % 60);
       //var leftoverSeconds takes seconds modulus by 60 to get the remainder of seconds (rounded down using math.floor)
       if ( leftoverSeconds < 10) {
-        leftoverSeconds = "0" + leftoverSeconds;
-      }
+        leftoverSeconds = "0" + leftoverSeconds
+         }
       //if states that if leftoverSeconds is less than 9 than it will add a "0" to the front of the number
+
       return(minutes + ':' + leftoverSeconds);
       //return states add var minutes and var leftoversecond together with a : to format time like mm:ss
  }
@@ -131,7 +133,7 @@ class Album extends Component {
      return (
        <section className="album">
        <section id="album-info">
-       <img id="album-cover-art" src={this.state.album.albumCover} />
+       <img id="album-cover-art" alt ="Album Cover Art" src={this.state.album.albumCover} />
             <div className="album-details">
             <h1 id="album-title">{this.state.album.title}</h1>
            <h2 className="artist">{this.state.album.artist}</h2>
